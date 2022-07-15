@@ -14,7 +14,7 @@ func (s *Server) accept(listen net.Listener) error {
 			if strings.Contains(err.Error(), "use of closed network connection") {
 				return nil
 			}
-			log.Printf("Unable to accept connections: %#v\n", err)
+			log.Errorf("Unable to accept connections: %#v\n", err)
 			return err
 		}
 
@@ -26,17 +26,17 @@ func (s *Server) accept(listen net.Listener) error {
 				bytesRead, err := conn.Read(packet)
 				if err != nil {
 					if err != io.EOF {
-						log.Printf("read error %v\n", err)
+						log.Errorf("read error %v\n", err)
 					}
-					return
+					return err
 				}
 				// Set the length of the packet to the number of read bytes.
 				packet = packet[:bytesRead]
 
 				frame, err := NewTCPFrame(packet)
 				if err != nil {
-					log.Printf("bad packet error %v\n", err)
-					return
+					log.Errorf("bad packet error %v\n", err)
+					return err
 				}
 
 				request := &Request{conn, frame}

@@ -12,7 +12,8 @@ import (
 func (s *Server) ListenRTU(serialConfig *serial.Config) (err error) {
 	port, err := serial.Open(serialConfig)
 	if err != nil {
-		log.Fatalf("failed to open %s: %v\n", serialConfig.Address, err)
+		log.Errorf("failed to open %s: %v\n", serialConfig.Address, err)
+		return err
 	}
 	s.ports = append(s.ports, port)
 
@@ -22,7 +23,7 @@ func (s *Server) ListenRTU(serialConfig *serial.Config) (err error) {
 		s.acceptSerialRequests(port)
 	}()
 
-	return err
+	return nil
 }
 
 func (s *Server) acceptSerialRequests(port serial.Port) {
